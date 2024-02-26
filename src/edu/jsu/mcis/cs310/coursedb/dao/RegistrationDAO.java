@@ -9,7 +9,15 @@ import java.sql.Statement;
 public class RegistrationDAO {
     
     private final DAOFactory daoFactory;
-    
+    private static final String QUERY_INSERT = "INSERT INTO registration (studentid, termid, crn) VALUES (?,?,?)";
+    private static final String QUERY_DELETE = "DELETE FROM registration WHERE studentid=? AND termid=? AND crn=?";
+    private static final String QUERY_DELETE2 = "DELETE FROM registration WHERE studentid=? AND termid=?";
+    private static final String QUERY_SELECT = "SELECT * FROM registration WHERE studentid=? AND termid=?";
+
+    //private static final String QUERY_SELECT = "SELECT * FROM registration WHERE studentid=? AND termid=? AND crn=?";
+
+
+
     RegistrationDAO(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
@@ -20,15 +28,24 @@ public class RegistrationDAO {
         
         PreparedStatement ps = null;
         ResultSet rs = null;
+        int cs;
         
         try {
             
             Connection conn = daoFactory.getConnection();
-            
+
             if (conn.isValid(0)) {
-                
-                // INSERT YOUR CODE HERE
-                
+
+                ps = conn.prepareStatement(QUERY_INSERT);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+                ps.setInt(3, crn);
+
+                cs = ps.executeUpdate();
+
+                if (cs > 0) {
+                    result = true;
+                }
             }
             
         }
@@ -51,6 +68,8 @@ public class RegistrationDAO {
         boolean result = false;
         
         PreparedStatement ps = null;
+
+        int deletedRow;
         
         try {
             
@@ -58,8 +77,16 @@ public class RegistrationDAO {
             
             if (conn.isValid(0)) {
                 
-                // INSERT YOUR CODE HERE
-                
+                ps = conn.prepareStatement(QUERY_DELETE);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+                ps.setInt(3, crn);
+
+                deletedRow = ps.executeUpdate();
+
+                if(deletedRow > 0) {
+                    result = true;
+                }
             }
             
         }
@@ -81,15 +108,26 @@ public class RegistrationDAO {
         boolean result = false;
         
         PreparedStatement ps = null;
+
+        int deletedRow;
         
         try {
             
             Connection conn = daoFactory.getConnection();
+
             
             if (conn.isValid(0)) {
                 
-                // INSERT YOUR CODE HERE
-                
+                ps = conn.prepareStatement(QUERY_DELETE2);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+
+                deletedRow = ps.executeUpdate();
+
+                if(deletedRow > 0) {
+                    result = true;
+                }
+
             }
             
         }
@@ -119,8 +157,14 @@ public class RegistrationDAO {
             Connection conn = daoFactory.getConnection();
             
             if (conn.isValid(0)) {
-                
-                // INSERT YOUR CODE HERE
+
+                ps = conn.prepareStatement(QUERY_SELECT);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+
+                rs = ps.executeQuery();
+
+                DAOUtility.getResultSetAsJson(rs);
                 
             }
             

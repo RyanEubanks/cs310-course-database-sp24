@@ -11,13 +11,23 @@ public class DAOUtility {
     public static String getResultSetAsJson(ResultSet rs) {
         
         JsonArray records = new JsonArray();
-        
+
         try {
         
             if (rs != null) {
 
-                // INSERT YOUR CODE HERE
+                ResultSetMetaData meta = rs.getMetaData();
+                int cols = meta.getColumnCount();
 
+                while(rs.next()) {
+                    JsonObject job = new JsonObject();
+
+                    for(int i = 1; i <= cols; i++) {
+                        job.put(meta.getCatalogName(i), rs.getObject(i));
+                    }
+                    records.add(job);
+                }
+                return records.toString();
             }
             
         }
